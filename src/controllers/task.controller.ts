@@ -1,6 +1,7 @@
-import {Controller, Get, Post, Patch, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe} from '@nestjs/common';
 import {TaskService} from '../services/task.service';
 import {IUpdateTask} from '../interfaces/task.interface';
+import {UpdateTaskDto, CreateTaskDto} from '../dto/task.dto';
 
 @Controller('tasks')
 export class TaskController {
@@ -13,22 +14,25 @@ export class TaskController {
   }
 
   @Get(':taskId')
-  async getTaskById(taskId: number) {
+  async getTaskById(@Param('taskId', ParseIntPipe) taskId: number) {
     return this.taskService.getTaskById(taskId);
   }
 
   @Post()
-  async createTask(taskInfo: string) {
-    return this.taskService.createTask(taskInfo);
+  async createTask(@Body() taskInfo: CreateTaskDto) {
+    return this.taskService.createTask(taskInfo.content);
   }
 
   @Patch(':taskId')
-  async updateTaskById(taskInfo: IUpdateTask) {
-    return this.taskService.updateTaskById(taskInfo);
+  async updateTaskById(
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Body() taskInfo: UpdateTaskDto
+  ) {
+    return this.taskService.updateTaskById({id: taskId, ...taskInfo});
   }
 
   @Delete(':taskId')
-  async removeTaskById(taskId: number) {
+  async removeTaskById(@Param('taskId', ParseIntPipe) taskId: number) {
     return this.taskService.removeTaskById(taskId);
   }
 }
