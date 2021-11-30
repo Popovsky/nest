@@ -34,10 +34,9 @@ export class TaskService {
   }
 
   updateTaskById(taskInfo: IUpdateTask): ITask {
-    return {
-      ...this.data.find(task => task.id === taskInfo.id),
-      ...taskInfo,
-      updatedAt: Date.now(),
-    };
+    const updatedTask = this.data.find(task => task.id === taskInfo.id);
+    Object.keys(taskInfo).map(prop => updatedTask[prop] = taskInfo[prop]);
+    updatedTask.updatedAt = Date.now();
+    return updatedTask;
   }
 }
